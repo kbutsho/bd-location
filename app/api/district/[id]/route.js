@@ -1,6 +1,18 @@
 import locations from '../../../../data/locations.json';
 
 export async function GET(req, { params }) {
+    const headers = {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*', // allow all origins
+        'Access-Control-Allow-Methods': 'GET, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+    };
+
+    // Handle preflight request
+    if (req.method === 'OPTIONS') {
+        return new Response(null, { headers });
+    }
+
     const { id } = params;
 
     const district = locations.districts.find(
@@ -14,7 +26,7 @@ export async function GET(req, { params }) {
                 success: false,
                 message: 'District not found'
             }),
-            { headers: { 'Content-Type': 'application/json' }, status: 404 }
+            { headers, status: 404 }
         );
     }
 
@@ -26,8 +38,7 @@ export async function GET(req, { params }) {
             name_en: district.name_en,
             name_bn: district.name_bn,
             police_stations: district.police_stations
-
         }),
-        { headers: { 'Content-Type': 'application/json' } }
+        { headers }
     );
 }
